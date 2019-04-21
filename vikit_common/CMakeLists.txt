@@ -4,21 +4,23 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8.3)
 SET(CMAKE_BUILD_TYPE Release) # Release, RelWithDebInfo
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/CMakeModules/")
-SET(USE_ROS TRUE) # Set False if you want to build this package without Catkin
+SET(USE_ROS FALSE) # Set False if you want to build this package without Catkin
 
-# Set build flags. Set IS_ARM on odroid board as environment variable
-SET(CMAKE_CXX_FLAGS "-Wall -D_LINUX -D_REENTRANT -march=native -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unknown-pragmas")
-IF(DEFINED ENV{ARM_ARCHITECTURE})
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon -march=armv7-a")
-ELSE()
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmmx -msse -msse -msse2 -msse3 -mssse3")
+IF(NOT MSVC_IDE)
+  # Set build flags. Set IS_ARM on odroid board as environment variable
+  SET(CMAKE_CXX_FLAGS "-Wall -D_LINUX -D_REENTRANT -march=native -Wno-unused-variable -Wno-unused-but-set-variable -Wno-unknown-pragmas")
+  IF(DEFINED ENV{ARM_ARCHITECTURE})
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon -march=armv7-a")
+  ELSE()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmmx -msse -msse -msse2 -msse3 -mssse3")
+  ENDIF()
+  IF(CMAKE_COMPILER_IS_GNUCC)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  ELSE()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  ENDIF()
+  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -fsee -fomit-frame-pointer -fno-signed-zeros -fno-math-errno -funroll-loops")
 ENDIF()
-IF(CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-ELSE()
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ENDIF()
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3 -fsee -fomit-frame-pointer -fno-signed-zeros -fno-math-errno -funroll-loops")
 
 # Add plain cmake packages 
 FIND_PACKAGE(OpenCV REQUIRED)
@@ -52,7 +54,7 @@ LIST(APPEND SOURCEFILES src/atan_camera.cpp
                         src/omni_camera.cpp
                         src/math_utils.cpp
                         src/vision.cpp
-                        src/performance_monitor.cpp
+                        #src/performance_monitor.cpp
                         src/robust_cost.cpp
                         src/user_input_thread.cpp
                         src/pinhole_camera.cpp
@@ -60,7 +62,11 @@ LIST(APPEND SOURCEFILES src/atan_camera.cpp
                         src/img_align.cpp)
 
 # Create vikit library
-ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCEFILES})
+IF(MSVC_IDE)
+  ADD_LIBRARY(${PROJECT_NAME} STATIC ${SOURCEFILES})
+ELSE()
+  ADD_LIBRARY(${PROJECT_NAME} SHARED ${SOURCEFILES})
+ENDIF()
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
   ${OpenCV_LIBS}
   ${Sophus_LIBRARIES}
@@ -71,14 +77,14 @@ IF(USE_ROS)
 ENDIF()
 
 # Tests
-ADD_EXECUTABLE(test_vk_common_camera test/test_camera.cpp)
-TARGET_LINK_LIBRARIES(test_vk_common_camera ${PROJECT_NAME})
+#ADD_EXECUTABLE(test_vk_common_camera test/test_camera.cpp)
+#TARGET_LINK_LIBRARIES(test_vk_common_camera ${PROJECT_NAME})
 
-ADD_EXECUTABLE(test_vk_common_triangulation test/test_triangulation.cpp)
-TARGET_LINK_LIBRARIES(test_vk_common_triangulation ${PROJECT_NAME})
+#ADD_EXECUTABLE(test_vk_common_triangulation test/test_triangulation.cpp)
+#TARGET_LINK_LIBRARIES(test_vk_common_triangulation ${PROJECT_NAME})
 
-ADD_EXECUTABLE(test_vk_common_patch_score test/test_patch_score.cpp)
-TARGET_LINK_LIBRARIES(test_vk_common_patch_score ${PROJECT_NAME})
+#ADD_EXECUTABLE(test_vk_common_patch_score test/test_patch_score.cpp)
+#TARGET_LINK_LIBRARIES(test_vk_common_patch_score ${PROJECT_NAME})
 
 
 ################################################################################

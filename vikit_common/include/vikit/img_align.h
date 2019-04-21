@@ -17,7 +17,7 @@
 #include <vikit/math_utils.h>
 #include <vikit/pinhole_camera.h>
 #include <vikit/nlls_solver.h>
-#include <vikit/performance_monitor.h>
+//#include <vikit/performance_monitor.h>
 #include <sophus/se3.h>
 
 namespace vk {
@@ -39,7 +39,7 @@ protected:
   vector<cv::Mat>&      img_pyr_dy_;
   int                   level_;
   int                   n_levels_;
-  PerformanceMonitor    permon_;
+  //PerformanceMonitor    permon_;
   bool                  display_;
   bool                  log_;
   double                res_thresh_;
@@ -108,7 +108,7 @@ protected:
   vector<cv::Mat>&      tpl_pyr_dx_;
   vector<cv::Mat>&      tpl_pyr_dy_;
   int                   level_;
-  PerformanceMonitor    permon_;
+  //PerformanceMonitor    permon_;
   bool                  display_;
   bool                  log_;
   float                 res_thresh_;

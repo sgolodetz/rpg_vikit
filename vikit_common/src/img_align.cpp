@@ -18,7 +18,7 @@
 #include <vikit/vision.h>
 #include <vikit/pinhole_camera.h>
 #include <vikit/nlls_solver.h>
-#include <vikit/performance_monitor.h>
+//#include <vikit/performance_monitor.h>
 #include <vikit/img_align.h>
 #include <sophus/se3.h>
 

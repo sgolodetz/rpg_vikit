@@ -1,7 +1,7 @@
 #ifndef USER_INPUT_THREAD_H
 #define USER_INPUT_THREAD_H
 
-#include <termios.h>
+//#include <termios.h>
 #include <thread>
 
 namespace vk {
@@ -45,8 +45,8 @@ private:
   std::thread * user_input_thread_;
   char input_;
 
-  struct termios original_terminal_settings_;
-  struct termios old_terminal_settings_, new_terminal_settings_;
+  /*struct termios original_terminal_settings_;
+  struct termios old_terminal_settings_, new_terminal_settings_;*/
 };
 
 } // end namespace vk
